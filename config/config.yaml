@@ -59,6 +59,13 @@ display:
   tool_progress: all
   streaming: true
 
+# ── Gateway Platforms ───────────────────────
+platforms:
+  whatsapp:
+    enabled: true
+    mode: self-chat
+    dm_policy: allowlist
+
 # ── Platform Tools ──────────────────────────
 platform_toolsets:
   cli: [hermes-cli]
