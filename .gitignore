@@ -1,0 +1,29 @@
+# Secrets — NEVER commit
+.env
+*.key
+*.pem
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Hermes runtime (managed on each machine)
+sessions/
+logs/
+skills/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Node
+node_modules/
