@@ -12,8 +12,13 @@ experimental = true
 
 # ── Default: full setup ──────────────────────
 [tasks.default]
-description = "Full setup — system, hermes, config, cron"
-depends = ["system", "hermes:install", "config:deploy", "cron:install"]
+description = "Full setup — system, terminal, hermes, config, cron"
+depends = ["system", "terminal", "hermes:install", "config:deploy", "cron:install"]
+
+# ── Terminal ─────────────────────────────────
+[tasks.terminal]
+description = "Setup modern terminal (WezTerm, Starship, fzf, zsh plugins)"
+run = "./scripts/terminal.sh"
 
 # ── System prerequisites ──────────────────────
 [tasks.system]
@@ -21,52 +26,52 @@ description = "System prerequisites (git, ssh, github, tools)"
 run = "./scripts/system.sh"
 
 # ── Hermes ───────────────────────────────────
-[tasks.hermes:install]
+[tasks."hermes:install"]
 description = "Install Hermes Agent"
 run = "./scripts/hermes-install.sh"
 
-[tasks.hermes:setup]
+[tasks."hermes:setup"]
 description = "Run interactive Hermes setup wizard"
 run = "hermes setup"
 
-[tasks.hermes:start]
+[tasks."hermes:start"]
 description = "Start Hermes agent"
 run = "hermes"
 
-[tasks.hermes:tools]
+[tasks."hermes:tools"]
 description = "Review/enabled tools"
 run = "hermes tools"
 
-[tasks.hermes:model]
+[tasks."hermes:model"]
 description = "Change the model"
 run = "hermes model"
 
-[tasks.hermes:gateway]
+[tasks."hermes:gateway"]
 description = "Setup messaging gateway (Telegram, Discord, etc.)"
 run = "hermes gateway setup"
 
 # ── Config ───────────────────────────────────
-[tasks.config:deploy]
+[tasks."config:deploy"]
 description = "Deploy config files to ~/.hermes/"
 run = "./scripts/deploy-config.sh"
 
-[tasks.config:edit-env]
+[tasks."config:edit-env"]
 description = "Edit ~/.hermes/.env with API keys"
 run = "$EDITOR ~/.hermes/.env"
 
-[tasks.config:edit-yaml]
+[tasks."config:edit-yaml"]
 description = "Edit ~/.hermes/config.yaml"
 run = "$EDITOR ~/.hermes/config.yaml"
 
 # ── Cron ──────────────────────────────────────
-[tasks.cron:install]
+[tasks."cron:install"]
 description = "Install daily memory compaction cron (3am)"
 run = "./scripts/cron-install.sh"
 
-[tasks.cron:run]
+[tasks."cron:run"]
 description = "Run memory compaction manually"
 run = "./cron/memory-update.sh"
 
-[tasks.cron:logs]
+[tasks."cron:logs"]
 description = "View cron logs"
 run = "cat ~/.hermes/logs/cron-memory.log"

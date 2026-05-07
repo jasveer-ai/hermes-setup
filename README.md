@@ -51,7 +51,7 @@ cd ~/Projects/hermes-setup
 mise install
 
 # 5. Run full setup
-mise
+mise run
 ```
 
 ## Tasks
@@ -88,9 +88,11 @@ hermes-setup/
 │   ├── USER.md               # User profile (preserved across deploys)
 │   ├── AGENTS.md             # Workspace-wide agent instructions
 │   ├── config.yaml           # Hermes configuration
+│   ├── wezterm.lua           # WezTerm terminal config
 │   └── .env.example          # API key template
 ├── scripts/
 │   ├── system.sh             # System: git, ssh, github, tools
+│   ├── terminal.sh           # Terminal: WezTerm, Starship, fzf, zsh plugins
 │   ├── hermes-install.sh     # Install Hermes Agent
 │   ├── deploy-config.sh      # Deploy config files to ~/.hermes/
 │   └── cron-install.sh       # Install crontab entries
@@ -107,6 +109,7 @@ hermes-setup/
 | `config/USER.md` | `~/.hermes/USER.md` | User profile | Yes |
 | `config/AGENTS.md` | `~/AGENTS.md` | Workspace instructions | Yes |
 | `config/config.yaml` | `~/.hermes/config.yaml` | Hermes config | Yes |
+| `config/wezterm.lua` | `~/.config/wezterm/wezterm.lua` | WezTerm terminal config | No (always overwritten) |
 | `config/.env.example` | `~/.hermes/.env` | API keys | Yes |
 
 ## After Setup
