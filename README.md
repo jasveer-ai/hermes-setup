@@ -47,10 +47,7 @@ eval "$(mise activate zsh)"
 git clone https://github.com/jasveer-ai/hermes-setup.git ~/Projects/hermes-setup
 cd ~/Projects/hermes-setup
 
-# 4. Install tool versions
-mise install
-
-# 5. Run full setup
+# 4. Run full setup
 mise run
 ```
 
@@ -79,7 +76,8 @@ Run `mise tasks ls` for the full list.
 
 ```
 hermes-setup/
-├── .mise.toml                # mise config — tools, env, tasks
+├── .mise.toml                # mise config — env, tasks
+├── .hermes → ~/.hermes/      # Symlink to Hermes home (gitignored)
 ├── LICENSE                   # MIT License
 ├── README.md                 # This file
 ├── config/
@@ -136,6 +134,7 @@ mise run hermes:gateway
 
 | Path | Purpose |
 |------|---------|
+| `.hermes/` (in repo) | Symlink to `~/.hermes/` — browse & edit in VSCode |
 | `~/.hermes/` | Hermes home — config, memory, skills, sessions, logs |
 | `~/.hermes/SOUL.md` | Agent personality |
 | `~/.hermes/MEMORY.md` | Persistent agent memory |

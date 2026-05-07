@@ -13,7 +13,15 @@ HERMES_HOME="$HOME/.hermes"
 
 echo "── Deploying Config ──"
 
+# Create ~/.hermes if missing
 mkdir -p "$HERMES_HOME"
+
+# Create repo-level symlink for VSCode visibility
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+if [[ ! -L "$REPO_ROOT/.hermes" ]]; then
+    ln -sf "$HERMES_HOME" "$REPO_ROOT/.hermes"
+    log_info "Symlink created: .hermes → $HERMES_HOME"
+fi
 
 # SOUL.md — always deploy (personality, not memory)
 cp "$CONFIG_DIR/SOUL.md" "$HERMES_HOME/SOUL.md"

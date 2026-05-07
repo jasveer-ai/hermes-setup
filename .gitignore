@@ -16,9 +16,7 @@
 *~
 
 # Hermes runtime (managed on each machine)
-sessions/
-logs/
-skills/
+.hermes
 
 # Python
 __pycache__/

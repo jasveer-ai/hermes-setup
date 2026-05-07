@@ -1,7 +1,3 @@
-[tools]
-python = "3.11"
-node = "22"
-
 [env]
 HERMES_HOME = "~/.hermes"
 
