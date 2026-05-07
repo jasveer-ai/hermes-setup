@@ -67,6 +67,18 @@ if [[ -f "$CONFIG_DIR/config.yaml" ]]; then
     fi
 fi
 
+# Skills — deploy all to ~/.hermes/skills/
+SKILLS_SRC="$CONFIG_DIR/skills"
+if [[ -d "$SKILLS_SRC" ]]; then
+    find "$SKILLS_SRC" -name 'SKILL.md' | while read -r skill_file; do
+        rel_path="${skill_file#$SKILLS_SRC/}"
+        dst="$HERMES_HOME/skills/$rel_path"
+        mkdir -p "$(dirname "$dst")"
+        cp "$skill_file" "$dst"
+        log_info "Skill deployed: $rel_path"
+    done
+fi
+
 # .env from template
 if [[ -f "$CONFIG_DIR/.env.example" ]]; then
     if [[ ! -f "$HERMES_HOME/.env" ]]; then
