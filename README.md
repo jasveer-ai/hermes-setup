@@ -85,6 +85,8 @@ hermes-setup/
 │   ├── hermes-install.sh     # Install Hermes Agent
 │   ├── deploy-config.sh      # Deploy config files to ~/.hermes/
 │   └── cron-install.sh       # Install crontab entries
+├── docs/
+│   └── HERMES.md             # Hermes Agent usage guide
 └── cron/
     └── memory-update.sh      # Daily memory compaction logic
 ```
