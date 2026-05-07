@@ -6,10 +6,15 @@ experimental = true
 
 [tasks]
 
+# ── Tool versions (installs anything in [tools]) ─
+[tasks."tools:install"]
+description = "Install tool versions from [tools]"
+run = "mise install"
+
 # ── Default: full setup ──────────────────────
 [tasks.default]
 description = "Full setup — system, terminal, hermes, config, cron"
-depends = ["system", "terminal", "hermes:install", "config:deploy", "cron:install"]
+depends = ["tools:install", "system", "terminal", "hermes:install", "config:deploy", "cron:install"]
 
 # ── Terminal ─────────────────────────────────
 [tasks.terminal]
@@ -26,38 +31,10 @@ run = "./scripts/system.sh"
 description = "Install Hermes Agent"
 run = "./scripts/hermes-install.sh"
 
-[tasks."hermes:setup"]
-description = "Run interactive Hermes setup wizard"
-run = "hermes setup"
-
-[tasks."hermes:start"]
-description = "Start Hermes agent"
-run = "hermes"
-
-[tasks."hermes:tools"]
-description = "Review/enabled tools"
-run = "hermes tools"
-
-[tasks."hermes:model"]
-description = "Change the model"
-run = "hermes model"
-
-[tasks."hermes:gateway"]
-description = "Setup messaging gateway (Telegram, Discord, etc.)"
-run = "hermes gateway setup"
-
 # ── Config ───────────────────────────────────
 [tasks."config:deploy"]
 description = "Deploy config files to ~/.hermes/"
 run = "./scripts/deploy-config.sh"
-
-[tasks."config:edit-env"]
-description = "Edit ~/.hermes/.env with API keys"
-run = "$EDITOR ~/.hermes/.env"
-
-[tasks."config:edit-yaml"]
-description = "Edit ~/.hermes/config.yaml"
-run = "$EDITOR ~/.hermes/config.yaml"
 
 # ── Cron ──────────────────────────────────────
 [tasks."cron:install"]
@@ -70,4 +47,4 @@ run = "./cron/memory-update.sh"
 
 [tasks."cron:logs"]
 description = "View cron logs"
-run = "cat ~/.hermes/logs/cron-memory.log"
+run = "cat ~/.hermes/logs/cron-memory.log 2>/dev/null || echo 'No logs yet'"

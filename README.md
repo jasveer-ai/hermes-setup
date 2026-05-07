@@ -51,26 +51,17 @@ cd ~/Projects/hermes-setup
 mise run
 ```
 
-## Tasks
+## Commands
 
-Run `mise tasks ls` for the full list.
+Run `mise tasks` to see all available commands.
 
-| Task | Description |
-|------|-------------|
-| `mise` | Full setup — system, hermes, config, cron |
-| `mise run system` | System prerequisites (git, ssh, github, tools) |
-| `mise run hermes:install` | Install Hermes Agent |
-| `mise run hermes:setup` | Interactive Hermes setup wizard |
-| `mise run hermes:start` | Start Hermes agent |
-| `mise run hermes:tools` | Review enabled tools |
-| `mise run hermes:model` | Change the model |
-| `mise run hermes:gateway` | Setup messaging gateway |
-| `mise run config:deploy` | Deploy config files to `~/.hermes/` |
-| `mise run config:edit-env` | Edit API keys in `~/.hermes/.env` |
-| `mise run config:edit-yaml` | Edit `~/.hermes/config.yaml` |
-| `mise run cron:install` | Install daily memory compaction cron |
-| `mise run cron:run` | Run memory compaction manually |
-| `mise run cron:logs` | View cron logs |
+| Command | What it does |
+|---------|--------------|
+| `mise run` | Full automated setup (tools, system, terminal, hermes, config, cron) |
+| `mise run system` | Interactive: git config, SSH keys, GitHub CLI |
+| `hermes setup` | Interactive wizard: API keys, model, messaging |
+
+After setup, use `hermes` directly (start, tools, model, gateway) — no wrappers needed.
 
 ## Repository Structure
 
@@ -113,21 +104,16 @@ hermes-setup/
 ## After Setup
 
 ```bash
-# Set your API key
-cp config/.env.example ~/.hermes/.env
-$EDITOR ~/.hermes/.env
-
-# Or use the interactive wizard
-mise run hermes:setup
+# Interactive wizard (API keys, model, messaging)
+hermes setup
 
 # Start the agent
-mise run hermes:start
+hermes
 
-# Review tools
-mise run hermes:tools
-
-# Setup messaging (Telegram, Discord, etc.)
-mise run hermes:gateway
+# Useful hermes commands
+hermes tools       # Review enabled tools
+hermes model       # Change the model
+hermes gateway setup  # Setup messaging (Telegram, Discord, etc.)
 ```
 
 ## Key Paths
