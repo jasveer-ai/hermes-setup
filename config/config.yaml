@@ -9,7 +9,7 @@ model:
   # Provider: "auto", "openrouter", "anthropic", "custom", etc.
   provider: "auto"
   # Default model
-  default: "anthropic/claude-sonnet-4-20250514"
+  default: "moonshotai/kimi-k2.6"
   # Base URL (only needed for custom/openrouter)
   base_url: "https://openrouter.ai/api/v1"
 
@@ -30,8 +30,8 @@ container_persistent: true
 memory:
   memory_enabled: true
   user_profile_enabled: true
-  memory_char_limit: 2200
-  user_char_limit: 1375
+  memory_char_limit: 10000
+  user_char_limit: 5000
   nudge_interval: 10
   flush_min_turns: 6
 
