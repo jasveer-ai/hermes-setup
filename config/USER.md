@@ -1,9 +1,9 @@
-# User Profile — jasveer-ai
+# User Profile
 
 ## Identity
-- GitHub: jasveer-ai
-- Email: account@example.com
-- Machine: MacBook (Apple Silicon), user: jazz.ai
+- GitHub: <your-github-username>
+- Email: <your-email>
+- Machine: MacBook (Apple Silicon)
 
 ## Communication Style
 - Prefers direct, actionable responses

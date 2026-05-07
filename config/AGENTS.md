@@ -45,15 +45,12 @@ This MacBook is the central hub for a zero-human autonomous company. The primary
 | `~/.hermes/skills/` | Agent skills directory |
 | `~/.hermes/sessions/` | Conversation sessions |
 | `~/.hermes/logs/` | Session logs |
-| `~/.ssh/id_ed25519_github` | GitHub SSH key |
+| `~/.ssh/` | SSH keys and config |
 | `~/Projects/` | Project workspace |
-| `~/Projects/hermes-setup/` | This setup repo |
 
 ## Git & GitHub
 
-- User: `jasveer-ai`
-- Email: `account@example.com`
-- SSH key: `~/.ssh/id_ed25519_github`
+- SSH key: `~/.ssh/id_ed25519_github` (or your preferred key)
 - Protocol: SSH
 - CLI: `gh` (authenticated)
 
@@ -71,9 +68,9 @@ This MacBook is the central hub for a zero-human autonomous company. The primary
 - macOS Apple Silicon
 - zsh (default shell)
 - Homebrew: `/opt/homebrew`
-- Node.js: `~/.hermes/node/` (v22)
-- Python: 3.11.15 (uv-managed)
-- Git: 2.50.1
+- mise: environment management (`~/.mise.toml`)
+- Node.js: v22 (mise-managed)
+- Python: 3.11 (mise-managed)
 
 ## Cron Jobs
 
