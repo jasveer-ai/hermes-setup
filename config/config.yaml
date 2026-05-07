@@ -1,0 +1,70 @@
+# Hermes Agent — MacBook Overseer Configuration
+# Deployed by hermes-setup repo
+#
+# Managed by: hermes config set <key> <value>
+# Or: hermes setup (interactive wizard)
+
+# ── Model ───────────────────────────────────
+model:
+  # Provider: "auto", "openrouter", "anthropic", "custom", etc.
+  provider: "auto"
+  # Default model
+  default: "anthropic/claude-sonnet-4-20250514"
+  # Base URL (only needed for custom/openrouter)
+  base_url: "https://openrouter.ai/api/v1"
+
+# ── Terminal ────────────────────────────────
+terminal:
+  backend: "local"
+  cwd: "."
+  timeout: 180
+  lifetime_seconds: 300
+
+# ── Container Resources ─────────────────────
+container_cpu: 1
+container_memory: 5120
+container_disk: 51200
+container_persistent: true
+
+# ── Memory ──────────────────────────────────
+memory:
+  memory_enabled: true
+  user_profile_enabled: true
+  memory_char_limit: 2200
+  user_char_limit: 1375
+  nudge_interval: 10
+  flush_min_turns: 6
+
+# ── Skills ──────────────────────────────────
+skills:
+  creation_nudge_interval: 15
+
+# ── Agent ───────────────────────────────────
+agent:
+  max_turns: 60
+  reasoning_effort: "medium"
+
+# ── Display ─────────────────────────────────
+display:
+  compact: false
+  tool_progress: all
+  streaming: true
+
+# ── Platform Tools ──────────────────────────
+platform_toolsets:
+  cli: [hermes-cli]
+
+# ── Speech-to-Text ──────────────────────────
+stt:
+  enabled: true
+  local:
+    model: "base"
+
+# ── Code Execution ──────────────────────────
+code_execution:
+  timeout: 300
+  max_tool_calls: 50
+
+# ── Delegation ──────────────────────────────
+delegation:
+  max_iterations: 50

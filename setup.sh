@@ -123,7 +123,7 @@ else
     export PATH="$HOME/.local/bin:$PATH"
     grep -q "$HOME/.local/bin" "$HOME/.zshrc" 2>/dev/null || echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.zshrc"
     grep -q "$HOME/.local/bin" "$HOME/.zprofile" 2>/dev/null || echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.zprofile"
-    
+
     log_info "Hermes installed"
 fi
 
@@ -168,12 +168,44 @@ if [[ -f "$SCRIPT_DIR/config/AGENTS.md" ]]; then
     fi
 fi
 
-# ── 8. Interactive Hermes setup ──────────────
-log_step "8. Hermes Configuration"
+# config.yaml
+if [[ -f "$SCRIPT_DIR/config/config.yaml" ]]; then
+    if [[ ! -f "$HERMES_HOME/config.yaml" ]]; then
+        cp "$SCRIPT_DIR/config/config.yaml" "$HERMES_HOME/config.yaml"
+        log_info "config.yaml deployed"
+    else
+        log_warn "config.yaml exists — not overwriting"
+    fi
+fi
 
-echo "Launching hermes setup wizard to configure API keys, model, and tools..."
+# .env from template
+if [[ -f "$SCRIPT_DIR/config/.env.example" ]]; then
+    if [[ ! -f "$HERMES_HOME/.env" ]]; then
+        cp "$SCRIPT_DIR/config/.env.example" "$HERMES_HOME/.env"
+        log_info ".env deployed from template"
+    else
+        log_warn ".env exists — not overwriting"
+    fi
+fi
+
+# ── 8. API Key ───────────────────────────────
+log_step "8. API Key"
+
+echo "Hermes needs at least one LLM provider API key."
+echo "OpenRouter (recommended): https://openrouter.ai/settings/keys"
 echo ""
-hermes setup
+read -rp "OpenRouter API key (leave blank to edit ~/.hermes/.env later): " OPENROUTER_KEY
+
+if [[ -n "$OPENROUTER_KEY" ]]; then
+    if grep -q "OPENROUTER_API_KEY=" "$HERMES_HOME/.env"; then
+        sed -i '' "s|^OPENROUTER_API_KEY=.*|OPENROUTER_API_KEY=$OPENROUTER_KEY|" "$HERMES_HOME/.env"
+    else
+        echo "OPENROUTER_API_KEY=$OPENROUTER_KEY" >> "$HERMES_HOME/.env"
+    fi
+    # Set provider to openrouter in config
+    sed -i '' 's|provider: "auto"|provider: "openrouter"|' "$HERMES_HOME/config.yaml"
+    log_info "OpenRouter API key saved"
+fi
 
 # ── 9. Cron (memory compaction) ──────────────
 log_step "9. Cron Jobs"
@@ -186,7 +218,7 @@ if [[ -f "$SCRIPT_DIR/cron/memory-update.sh" ]]; then
     CRON_LABEL="hermes-memory-compaction"
     crontab -l 2>/dev/null | grep -v "$CRON_LABEL" | crontab - || true
     (crontab -l 2>/dev/null | grep -v "$CRON_LABEL"; echo "0 3 * * * $HERMES_HOME/cron/memory-update.sh >> $HERMES_HOME/logs/cron-memory.log 2>&1 # $CRON_LABEL") | crontab - 2>/dev/null || log_warn "crontab not available"
-    
+
     log_info "Daily memory compaction cron installed (3am)"
 fi
 
@@ -195,9 +227,12 @@ log_step "Setup Complete"
 
 echo ""
 echo "Run 'hermes' to start your overseer agent."
-echo "Edit files anytime:"
+echo ""
+echo "Config files:"
 echo "  SOUL.md   → ~/.hermes/SOUL.md"
 echo "  MEMORY.md → ~/.hermes/MEMORY.md"
 echo "  USER.md   → ~/.hermes/USER.md"
 echo "  AGENTS.md → ~/AGENTS.md"
+echo "  config    → ~/.hermes/config.yaml"
+echo "  .env      → ~/.hermes/.env"
 echo ""
