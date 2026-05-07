@@ -73,8 +73,13 @@ platform_toolsets:
 # ── Speech-to-Text ──────────────────────────
 stt:
   enabled: true
+  provider: local
   local:
     model: "base"
+
+# ── Text-to-Speech ──────────────────────────
+tts:
+  provider: edge
 
 # ── Code Execution ──────────────────────────
 code_execution:
