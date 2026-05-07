@@ -14,12 +14,17 @@ run = "mise install"
 # ── Default: full setup ──────────────────────
 [tasks.default]
 description = "Full setup — system, terminal, hermes, config, cron"
-depends = ["tools:install", "system", "terminal", "hermes:install", "config:deploy", "cron:install"]
+depends = ["tools:install", "system", "terminal", "hermes:install", "config:deploy", "cron:install", "power"]
 
 # ── Terminal ─────────────────────────────────
 [tasks.terminal]
 description = "Setup modern terminal (WezTerm, Starship, fzf, zsh plugins)"
 run = "./scripts/terminal.sh"
+
+# ── Power ────────────────────────────────────
+[tasks.power]
+description = "Disable sleep for 24/7 agent operation (needs sudo)"
+run = "./scripts/power-settings.sh"
 
 # ── System prerequisites ──────────────────────
 [tasks.system]
