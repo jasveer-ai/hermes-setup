@@ -72,6 +72,49 @@ This MacBook is the central hub for a zero-human autonomous company. The primary
 - Node.js: v22 (mise-managed)
 - Python: 3.11 (mise-managed)
 
+## Addons (scripts/addons/)
+
+| Addon | What it does | Run with |
+|-------|-------------|----------|
+| `web-search.sh` | Free DuckDuckGo web search (ddgs CLI) | `mise run addons:web-search` |
+| `browser.sh` | Playwright browser automation (Chromium) | `mise run addons:browser` |
+| `voice.sh` | Free Edge TTS (`hermes-speak`) | `mise run addons:voice` |
+| `image-gen.sh` | Local image gen via MLX | `mise run addons:image-gen` |
+| `mcp-servers.sh` | MCP integrations (GitHub, filesystem) | `mise run addons:mcp` |
+| `enable-all.sh` | Enable all toolsets + max settings | `mise run addons:enable-all` |
+
+Run all at once: `mise run addons:all`
+
+## Hermes Tools
+
+| Tool | Location | Usage |
+|------|----------|-------|
+| `hermes-browser` | `~/.hermes/bin/` | Playwright browser automation |
+| `hermes-speak` | `~/.hermes/bin/` | Free TTS via Edge |
+| `hermes-image-gen` | `~/.hermes/bin/` | Local image gen (MLX) |
+| `chrome-cdp` | `~/.hermes/bin/` | Chrome CDP launcher |
+| `hermes-playwright-run` | `~/.hermes/bin/` | Run custom Playwright scripts |
+
+## Web Search
+
+DuckDuckGo free search:
+```bash
+ddgs text -q "your query" -m 5        # text search
+ddgs news -q "your query" -m 5        # news search
+```
+
+## Browser
+
+Playwright-based browser automation:
+```bash
+hermes-browser search "query"          # Google search
+hermes-browser extract https://url     # Extract page text
+hermes-browser screenshot url out.png  # Screenshot
+hermes-browser pdf url out.pdf         # Save as PDF
+hermes-browser interactive             # Visible browser
+hermes-browser script script.py        # Custom Playwright script
+```
+
 ## Cron Jobs
 
 - Daily at 3am: Memory compaction (`~/.hermes/cron/memory-update.sh`)

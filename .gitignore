@@ -25,3 +25,6 @@ __pycache__/
 
 # Node
 node_modules/
+
+# Test artifacts
+text_test_*.json

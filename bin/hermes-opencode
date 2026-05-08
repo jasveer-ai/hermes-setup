@@ -1,0 +1,188 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
+OPENCODE_SERVER_PORT=4096
+OPENCODE_SERVER_URL="http://localhost:${OPENCODE_SERVER_PORT}"
+OPENCODE_PID_FILE="${HERMES_HOME}/opencode-server.pid"
+OPENCODE_LOG="${HERMES_HOME}/logs/opencode-server.log"
+
+ensure_opencode() {
+  if ! command -v opencode &>/dev/null; then
+    echo "❌ opencode not found. Install it: brew install opencode-ai/tap/opencode"
+    exit 1
+  fi
+}
+
+get_server_pid() {
+  if [ -f "$OPENCODE_PID_FILE" ]; then
+    cat "$OPENCODE_PID_FILE"
+  fi
+}
+
+is_server_running() {
+  local pid
+  pid=$(get_server_pid)
+  if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+    return 0
+  fi
+  # Also check via port
+  if lsof -i ":${OPENCODE_SERVER_PORT}" -sTCP:LISTEN 2>/dev/null | grep -q LISTEN; then
+    local actual_pid
+    actual_pid=$(lsof -i ":${OPENCODE_SERVER_PORT}" -sTCP:LISTEN -t 2>/dev/null | head -1)
+    echo "$actual_pid" > "$OPENCODE_PID_FILE"
+    return 0
+  fi
+  return 1
+}
+
+start_server() {
+  ensure_opencode
+  if is_server_running; then
+    echo "OpenCode server already running (PID $(get_server_pid))"
+    echo "URL: ${OPENCODE_SERVER_URL}"
+    return 0
+  fi
+
+  mkdir -p "$(dirname "$OPENCODE_LOG")"
+  echo "Starting OpenCode server on port ${OPENCODE_SERVER_PORT}..."
+  nohup opencode serve --port "$OPENCODE_SERVER_PORT" --hostname "127.0.0.1" >> "$OPENCODE_LOG" 2>&1 &
+  local pid=$!
+  echo "$pid" > "$OPENCODE_PID_FILE"
+
+  sleep 2
+  if is_server_running; then
+    echo "✅ OpenCode server started (PID $pid)"
+    echo "   URL: ${OPENCODE_SERVER_URL}"
+  else
+    echo "❌ Failed to start OpenCode server. Check logs: ${OPENCODE_LOG}"
+    cat "$OPENCODE_LOG"
+    exit 1
+  fi
+}
+
+stop_server() {
+  local pid
+  pid=$(get_server_pid)
+  if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+    echo "Stopping OpenCode server (PID $pid)..."
+    kill "$pid" 2>/dev/null || true
+    sleep 1
+    if kill -0 "$pid" 2>/dev/null; then
+      kill -9 "$pid" 2>/dev/null || true
+    fi
+    rm -f "$OPENCODE_PID_FILE"
+    echo "✅ OpenCode server stopped"
+  else
+    echo "OpenCode server not running"
+    rm -f "$OPENCODE_PID_FILE"
+  fi
+}
+
+server_status() {
+  ensure_opencode
+  echo "=== OpenCode Status ==="
+  echo ""
+
+  if is_server_running; then
+    local pid
+    pid=$(get_server_pid)
+    local uptime
+    if [ -n "$pid" ]; then
+      uptime=$(ps -o etime= -p "$pid" 2>/dev/null | tr -d ' ')
+      echo "✅ Server running (PID $pid, uptime: ${uptime:-?})"
+    else
+      echo "✅ Server running (port ${OPENCODE_SERVER_PORT})"
+    fi
+    echo "   URL: ${OPENCODE_SERVER_URL}"
+  else
+    echo "❌ Server not running"
+    echo "   Start it: hermes-opencode start"
+  fi
+  echo ""
+
+  echo "--- Active opencode processes ---"
+  local procs
+  procs=$(ps aux | grep -i opencode | grep -v grep | grep -v "hermes-opencode" 2>/dev/null || true)
+  if [ -n "$procs" ]; then
+    echo "$procs" | awk '{printf "  PID=%-6s CPU=%-4s  %s\n", $2, $3, $11}'
+  else
+    echo "  (none)"
+  fi
+  echo ""
+
+  echo "--- Sessions ---"
+  opencode session list 2>/dev/null || echo "  (no sessions or server not responding)"
+}
+
+run_task() {
+  ensure_opencode
+  local message="$*"
+  if [ -z "$message" ]; then
+    echo "Usage: hermes-opencode run <task description>"
+    exit 1
+  fi
+
+  # If server is running, attach to it
+  if is_server_running; then
+    echo "📤 Sending task to OpenCode server..."
+    opencode run "$message" --attach "$OPENCODE_SERVER_URL" 2>&1
+  else
+    echo "📤 Running OpenCode directly..."
+    opencode run "$message" 2>&1
+  fi
+  local exit_code=$?
+  if [ $exit_code -eq 0 ]; then
+    echo "✅ Task completed (exit code: $exit_code)"
+  else
+    echo "❌ Task failed (exit code: $exit_code)"
+  fi
+  return $exit_code
+}
+
+list_sessions() {
+  ensure_opencode
+  echo "=== OpenCode Sessions ==="
+  opencode session list 2>/dev/null || echo "(no sessions)"
+}
+
+case "${1:-help}" in
+  start)
+    start_server
+    ;;
+  stop)
+    stop_server
+    ;;
+  restart)
+    stop_server
+    sleep 1
+    start_server
+    ;;
+  status)
+    server_status
+    ;;
+  run)
+    shift
+    run_task "$@"
+    ;;
+  sessions|session|ls)
+    list_sessions
+    ;;
+  help|--help|-h)
+    echo "Hermes OpenCode Integration"
+    echo ""
+    echo "Usage:"
+    echo "  hermes-opencode start          Start the headless OpenCode server"
+    echo "  hermes-opencode stop           Stop the server"
+    echo "  hermes-opencode restart        Restart the server"
+    echo "  hermes-opencode status         Show server status + active processes"
+    echo "  hermes-opencode run <task>     Send a task to OpenCode"
+    echo "  hermes-opencode sessions       List all OpenCode sessions"
+    echo "  hermes-opencode help           Show this help"
+    ;;
+  *)
+    echo "Unknown command: $1"
+    echo "Usage: hermes-opencode <start|stop|status|run|sessions|help>"
+    exit 1
+    ;;
+esac

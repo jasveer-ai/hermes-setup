@@ -1,41 +1,23 @@
-# Hermes Agent — MacBook Overseer Configuration
-# Deployed by hermes-setup repo
-#
-# Managed by: hermes config set <key> <value>
-# Or: hermes setup (interactive wizard)
-
-# ── Model ───────────────────────────────────
 model:
-  # Provider: "auto", "openrouter", "anthropic", "custom", etc.
-  # "custom" maps to any OpenAI-compatible endpoint (Ollama, vLLM, llama.cpp).
-  # Aliases: "ollama", "vllm", "llamacpp" all map to "custom".
-  provider: "custom"
-  # Default model (local Ollama)
-  default: "gemma4:e4b"
-  # Ollama local endpoint
-  base_url: "http://localhost:11434/v1"
-  # Context window (native 32K)
-  context_length: 131072
-
-# Fallback: OpenRouter when local model is down
-fallback_model:
   provider: openrouter
-  model: "moonshotai/kimi-k2.6"
-
-# ── Terminal ────────────────────────────────
+  default: moonshotai/kimi-k2.6
+fallback_model:
+  provider: custom
+  model: qwen3.5:9b
+  base_url: http://localhost:11434/v1
+  context_length: 131072
 terminal:
-  backend: "local"
-  cwd: "."
+  backend: local
+  cwd: .
   timeout: 180
   lifetime_seconds: 300
-
-# ── Container Resources ─────────────────────
+  env_passthrough:
+    - ANTHROPIC_API_KEY
+    - OPENAI_API_KEY
 container_cpu: 1
 container_memory: 5120
 container_disk: 51200
 container_persistent: true
-
-# ── Memory ──────────────────────────────────
 memory:
   memory_enabled: true
   user_profile_enabled: true
@@ -43,56 +25,83 @@ memory:
   user_char_limit: 5000
   nudge_interval: 10
   flush_min_turns: 6
-
-# ── Skills ──────────────────────────────────
 skills:
   creation_nudge_interval: 15
-
-# ── Agent ───────────────────────────────────
+  external_dirs:
+    - /Users/jazz-ai/Projects/hermes-setup/scripts/addons
 agent:
-  max_turns: 60
-  reasoning_effort: "medium"
-
-# ── Display ─────────────────────────────────
+  max_turns: 120
+  max_tool_rounds: 200
+  reasoning_effort: medium
+  api_max_retries: 3
 display:
   compact: false
   tool_progress: all
   streaming: true
-
-# ── Gateway Platforms ───────────────────────
 platforms:
   whatsapp:
     enabled: true
     mode: self-chat
     dm_policy: allowlist
-
   telegram:
     enabled: true
     dm_policy: allowlist
-
   bluebubbles:
     enabled: true
-
-# ── Platform Tools ──────────────────────────
 platform_toolsets:
-  cli: [hermes-cli]
-
-# ── Speech-to-Text ──────────────────────────
+  cli:
+    - hermes-cli
+    - vision
+    - image_gen
+    - tts
+    - browser
+    - browser-cdp
+    - code_execution
+    - delegation
+    - cronjob
+    - skills
+    - memory
+    - session_search
+    - moa
+    - messaging
+image_gen:
+  provider: mlx
+  model: runwayml/stable-diffusion-v1-5
 stt:
   enabled: true
   provider: local
   local:
-    model: "base"
-
-# ── Text-to-Speech ──────────────────────────
+    model: base
 tts:
   provider: edge
-
-# ── Code Execution ──────────────────────────
 code_execution:
   timeout: 300
   max_tool_calls: 50
-
-# ── Delegation ──────────────────────────────
 delegation:
-  max_iterations: 50
+  max_iterations: 100
+  max_concurrency: 5
+cron:
+  enabled: true
+approvals:
+  mode: smart
+  timeout: 60
+onboarding:
+  seen:
+    busy_input_prompt: true
+browser:
+  cdp_url: http://127.0.0.1:9222
+mcp_servers:
+  filesystem:
+    command: npx
+    args:
+      - "-y"
+      - "@modelcontextprotocol/server-filesystem"
+      - "/Users/jazz-ai/Projects"
+      - "/Users/jazz-ai/Desktop"
+    enabled: true
+  fetch:
+    command: npx
+    args:
+      - "-y"
+      - "@mcp-docs/server-fetch"
+    enabled: false

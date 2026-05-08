@@ -47,7 +47,7 @@ if [[ -f "$CONFIG_DIR/USER.md" ]]; then
     fi
 fi
 
-# AGENTS.md — deploy to home
+# AGENTS.md — preserve if exists
 if [[ -f "$CONFIG_DIR/AGENTS.md" ]]; then
     if [[ ! -f "$HOME/AGENTS.md" ]]; then
         cp "$CONFIG_DIR/AGENTS.md" "$HOME/AGENTS.md"
@@ -57,13 +57,13 @@ if [[ -f "$CONFIG_DIR/AGENTS.md" ]]; then
     fi
 fi
 
-# config.yaml
+# config.yaml — preserve if exists (use hermes config set for live changes)
 if [[ -f "$CONFIG_DIR/config.yaml" ]]; then
     if [[ ! -f "$HERMES_HOME/config.yaml" ]]; then
         cp "$CONFIG_DIR/config.yaml" "$HERMES_HOME/config.yaml"
-        log_info "config.yaml deployed"
+        log_info "config.yaml deployed (new)"
     else
-        log_warn "config.yaml exists — preserved"
+        log_warn "config.yaml exists — preserved (use 'hermes config set' for live changes)"
     fi
 fi
 

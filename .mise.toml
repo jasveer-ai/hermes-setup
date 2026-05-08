@@ -55,3 +55,36 @@ run = "./cron/memory-update.sh"
 [tasks."cron:logs"]
 description = "View cron logs"
 run = "cat ~/.hermes/logs/cron-memory.log 2>/dev/null || echo 'No logs yet'"
+
+# ── Addons: unlock Hermes full potential ──────
+[tasks."addons:all"]
+description = "Run all addons — web, browser, voice, toolsets, opencode"
+depends = ["addons:web-search", "addons:browser", "addons:voice", "addons:enable-all", "addons:opencode"]
+
+[tasks."addons:web-search"]
+description = "Free DuckDuckGo web search (no API key)"
+run = "./scripts/addons/web-search.sh"
+
+[tasks."addons:browser"]
+description = "Playwright browser automation (screenshots, extract, PDF)"
+run = "./scripts/addons/browser.sh"
+
+[tasks."addons:voice"]
+description = "Free TTS via Edge (no API key)"
+run = "./scripts/addons/voice.sh"
+
+[tasks."addons:image-gen"]
+description = "Local image gen via MLX or ComfyUI"
+run = "./scripts/addons/image-gen.sh"
+
+[tasks."addons:mcp"]
+description = "MCP server integrations (GitHub, filesystem, fetch)"
+run = "./scripts/addons/mcp-servers.sh"
+
+[tasks."addons:opencode"]
+description = "OpenCode headless server + session management"
+run = "./scripts/addons/opencode.sh"
+
+[tasks."addons:enable-all"]
+description = "Enable all Hermes toolsets and max settings"
+run = "./scripts/addons/enable-all.sh""
