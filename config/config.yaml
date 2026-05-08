@@ -66,6 +66,13 @@ platforms:
     mode: self-chat
     dm_policy: allowlist
 
+  telegram:
+    enabled: true
+    dm_policy: allowlist
+
+  bluebubbles:
+    enabled: true
+
 # ── Platform Tools ──────────────────────────
 platform_toolsets:
   cli: [hermes-cli]
