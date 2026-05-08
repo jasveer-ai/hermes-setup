@@ -10,8 +10,12 @@ log_warn() { echo -e "${YELLOW}[!]${NC} $1"; }
 
 echo "── Power Settings ──"
 
-# Disable sleep entirely
-pmset -a sleep 0
+# pmset requires root; suppress stderr when run without sudo
+if ! pmset -a sleep 0 2>/dev/null; then
+    log_warn "pmset requires root — skipping power settings (run with sudo if desired)"
+    exit 0
+fi
+
 pmset -a disksleep 0
 pmset -a displaysleep 0
 pmset -a hibernatemode 0

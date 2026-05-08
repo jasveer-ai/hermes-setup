@@ -1,6 +1,3 @@
-[env]
-HERMES_HOME = "~/.hermes"
-
 [settings]
 experimental = true
 

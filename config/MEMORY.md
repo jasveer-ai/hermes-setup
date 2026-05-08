@@ -73,7 +73,6 @@
 - To message Hermes: send FROM another account TO the configured Apple ID
 
 ### Hermes Gateway Troubleshooting
-- **`HERMES_HOME=~/.hermes` (literal tilde) breaks `.env` loading**: `Path('~/.hermes')` doesn't expand `~`, so `~/.hermes/.env` is never found→platforms never enabled. Fix: `unset HERMES_HOME` or use expanded path `/Users/jazz.ai/.hermes`
 - **Gateway log**: `~/.hermes/logs/gateway.log` and `gateway.error.log`
 - **Webhook test**: `curl -X POST "http://127.0.0.1:8645/bluebubbles-webhook?password=..."` with JSON payload to simulate an incoming message
 
