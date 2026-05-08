@@ -8,10 +8,15 @@ experimental = true
 description = "Install tool versions from [tools]"
 run = "mise install"
 
+# ── Ollama ───────────────────────────────────
+[tasks.ollama]
+description = "Install and start Ollama with gemma4:e4b"
+run = "./scripts/ollama.sh"
+
 # ── Default: full setup ──────────────────────
 [tasks.default]
-description = "Full setup — system, terminal, hermes, config, cron"
-depends = ["tools:install", "system", "terminal", "hermes:install", "config:deploy", "cron:install", "power"]
+description = "Full setup — system, terminal, hermes, config, cron, ollama"
+depends = ["tools:install", "system", "terminal", "hermes:install", "config:deploy", "cron:install", "ollama", "power"]
 
 # ── Terminal ─────────────────────────────────
 [tasks.terminal]
