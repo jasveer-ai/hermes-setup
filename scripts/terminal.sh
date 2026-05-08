@@ -22,7 +22,7 @@ else
 fi
 
 # ── Nerd Font ────────────────────────────────
-if [[ ! -d "/Users/$USER/Library/Fonts/JetBrainsMonoNerdFont-Regular.ttf" ]]; then
+if [[ ! -f "/Users/$USER/Library/Fonts/JetBrainsMonoNerdFontMono-Regular.ttf" ]]; then
     log_warn "Installing JetBrains Mono Nerd Font..."
     brew install font-jetbrains-mono-nerd-font
 else
@@ -70,6 +70,54 @@ if [[ -f "$WEZTERM_SOURCE" ]]; then
     mkdir -p "$WEZTERM_CONFIG_DIR"
     cp "$WEZTERM_SOURCE" "$WEZTERM_CONFIG_DIR/wezterm.lua"
     log_info "WezTerm config deployed"
+fi
+
+# ── zshrc setup (safe, non-destructive) ──────
+ZSHRC="$HOME/.zshrc"
+
+ensure_zshrc_line() {
+    local line="$1"
+    if [[ ! -f "$ZSHRC" ]] || ! grep -qxF "$line" "$ZSHRC" 2>/dev/null; then
+        echo "$line" >> "$ZSHRC"
+        return 0
+    fi
+    return 1
+}
+
+if [[ ! -f "$ZSHRC" ]]; then
+    log_warn "Creating ~/.zshrc..."
+    touch "$ZSHRC"
+    log_info "~/.zshrc created"
+else
+    log_info "~/.zshrc exists — appending missing lines only"
+fi
+
+# Append starship init if missing
+if ensure_zshrc_line 'eval "$(starship init zsh)"'; then
+    log_info "Added Starship init to ~/.zshrc"
+fi
+
+# Append plugin sources if missing
+if ensure_zshrc_line 'source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh'; then
+    log_info "Added zsh-syntax-highlighting to ~/.zshrc"
+fi
+
+if ensure_zshrc_line 'source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh'; then
+    log_info "Added zsh-autosuggestions to ~/.zshrc"
+fi
+
+# Append fzf bindings if missing
+if ensure_zshrc_line 'source /opt/homebrew/opt/fzf/shell/key-bindings.zsh 2>/dev/null'; then
+    log_info "Added fzf key bindings to ~/.zshrc"
+fi
+
+if ensure_zshrc_line 'source /opt/homebrew/opt/fzf/shell/completion.zsh 2>/dev/null'; then
+    log_info "Added fzf completion to ~/.zshrc"
+fi
+
+# Append PATH if missing
+if ensure_zshrc_line 'export PATH="$HOME/.local/bin:$PATH"'; then
+    log_info "Added PATH export to ~/.zshrc"
 fi
 
 log_info "Terminal setup complete. Restart your shell to apply."
